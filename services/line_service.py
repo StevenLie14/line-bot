@@ -10,6 +10,9 @@ from core.config import settings
 from linebot.v3 import WebhookHandler
 from linebot.v3.webhooks import MessageEvent, TextMessageContent
 import asyncio
+from database.db import get_database
+from contextlib import AsyncExitStack
+import inspect
 
 
 configuration = Configuration(access_token=settings.ACCESS_TOKEN)
@@ -40,6 +43,7 @@ def handle_message(event):
     if handler_func:
         try:
             if asyncio.iscoroutinefunction(handler_func):
+                
                 asyncio.create_task(
                     run_async_handler(handler_func, args, event)
                 )
@@ -62,6 +66,15 @@ def send_reply(reply_token, reply_text):
 
 async def run_async_handler(handler_func, args, event):
     try:
+        async with AsyncExitStack() as stack:
+            reply_text = None
+            if "db" in inspect.signature(handler_func).parameters:
+                db = await stack.enter_async_context(get_database())
+                reply_text = await handler_func(*args, db)
+            else:
+                reply_text = await handler_func(*args)
+            if reply_text is not None:
+                send_reply(event.reply_token, reply_text)
         reply_text = await handler_func(*args)
         if reply_text is not None:
             send_reply(event.reply_token, reply_text)
