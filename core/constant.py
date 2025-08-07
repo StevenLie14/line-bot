@@ -93,3 +93,18 @@ position_map = {
     Position.HEAD: ["Head - KMG"]
 }
 
+day_map = {
+    1: "Monday",
+    2: "Tuesday",
+    3: "Wednesday",
+    4: "Thursday",
+    5: "Friday",
+    6: "Saturday",
+    7: "Sunday"
+}
+
+shift_map = {
+    "M": "Night",
+    "P": "Morning",
+    "N": "Normal"
+}

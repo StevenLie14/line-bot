@@ -68,15 +68,12 @@ async def run_async_handler(handler_func, args, event):
     try:
         async with AsyncExitStack() as stack:
             reply_text = None
-            if "db" in inspect.signature(handler_func).parameters:
-                db = await stack.enter_async_context(get_database())
-                reply_text = await handler_func(*args, db)
+            if "event" in inspect.signature(handler_func).parameters:
+                reply_text = await handler_func(*args,event=event)
             else:
+                print()
                 reply_text = await handler_func(*args)
             if reply_text is not None:
                 send_reply(event.reply_token, reply_text)
-        reply_text = await handler_func(*args)
-        if reply_text is not None:
-            send_reply(event.reply_token, reply_text)
     except Exception as e:
         print(f"Error in async handler: {e}")
