@@ -50,7 +50,7 @@ async def get_user_by_positions(position: Position):
 async def get_all_users():
     with get_database() as db:
         return db.query(Users).all()
-
+    
 async def sync_line_id(initial: str, line_id: str):
     with get_database() as db:
         try:

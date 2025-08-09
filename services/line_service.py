@@ -9,9 +9,8 @@ from routes.route import route_map
 from core.config import settings
 from linebot.v3 import WebhookHandler
 from linebot.v3.webhooks import MessageEvent, TextMessageContent
+from utils.helper import parse_user_command
 import asyncio
-from database.db import get_database
-from contextlib import AsyncExitStack
 import inspect
 
 
@@ -33,17 +32,13 @@ async def callback(body, x_line_signature):
 
 @handler.add(MessageEvent, message=TextMessageContent)
 def handle_message(event):
-    user_text = event.message.text.strip()
-    parts = user_text.split(" ")
-    command = parts[0]
-    args = parts[1:]
+    command,args = parse_user_command(event.message.text)
     handler_func = route_map.get(command)
     print(command, args)
 
     if handler_func:
         try:
             if asyncio.iscoroutinefunction(handler_func):
-                
                 asyncio.create_task(
                     run_async_handler(handler_func, args, event)
                 )
@@ -66,14 +61,12 @@ def send_reply(reply_token, reply_text):
 
 async def run_async_handler(handler_func, args, event):
     try:
-        async with AsyncExitStack() as stack:
-            reply_text = None
-            if "event" in inspect.signature(handler_func).parameters:
-                reply_text = await handler_func(*args,event=event)
-            else:
-                print()
-                reply_text = await handler_func(*args)
-            if reply_text is not None:
-                send_reply(event.reply_token, reply_text)
+        reply_text = None
+        if "event" in inspect.signature(handler_func).parameters:
+            reply_text = await handler_func(*args,event=event)
+        else:
+            reply_text = await handler_func(*args)
+        if reply_text is not None:
+            send_reply(event.reply_token, reply_text)
     except Exception as e:
         print(f"Error in async handler: {e}")
