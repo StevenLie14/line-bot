@@ -1,34 +1,37 @@
 from services import user_service
 from core.constant import Position
-from sqlalchemy.orm import Session
 from linebot.v3.webhooks import MessageEvent
 from core.config import settings
 from linebot.v3.messaging import TextMessageV2
+from utils.helper import parse_user_args
 
 
-async def get_active_rnd():
-    return await user_service.get_user_by_positions(Position.RND)
+async def get_active_rnd(event : MessageEvent):
+    return await user_service.get_user_by_positions(Position.RND, event.source.group_id)
 
-async def get_active_dba():
-    return await user_service.get_user_by_positions(Position.DBA)
+async def get_active_dba(event : MessageEvent):
+    return await user_service.get_user_by_positions(Position.DBA, event.source.group_id)
 
-async def get_active_na():
-    return await user_service.get_user_by_positions(Position.KMG_NA)
+async def get_active_na(event : MessageEvent):
+    return await user_service.get_user_by_positions(Position.KMG_NA, event.source.group_id)
 
-async def get_active_op():
-    return await user_service.get_user_by_positions(Position.OP)
+async def get_active_op(event : MessageEvent):
+    return await user_service.get_user_by_positions(Position.OP, event.source.group_id)
 
-async def get_active_part():
-    return await user_service.get_user_by_positions(Position.PART)
+async def get_active_part(event : MessageEvent):
+    return await user_service.get_user_by_positions(Position.PART, event.source.group_id)
 
-async def get_active_resman():
-    return await user_service.get_user_by_positions(Position.RESMAN)
+async def get_active_resman(event : MessageEvent):
+    return await user_service.get_user_by_positions(Position.RESMAN, event.source.group_id)
 
-async def get_active_head():
-    return await user_service.get_user_by_positions(Position.HEAD)
+async def get_active_head(event : MessageEvent):
+    return await user_service.get_user_by_positions(Position.HEAD, event.source.group_id)
 
-async def sync_line_id(event: MessageEvent, token: str, initial: str):
-    if (token != settings.SYNC_TOKEN):
+async def sync_line_id(event: MessageEvent):
+    args = parse_user_args(event.message.text)
+    initial = args[0]
+    token = args[1]
+    if (token != settings.SYNC_USER_TOKEN):
         return TextMessageV2(text="Invalid sync token.")
 
     line_id = event.source.user_id

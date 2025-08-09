@@ -9,6 +9,7 @@ class Settings:
     CHANNEL_SECRET = os.getenv('CHANNEL_SECRET')
     RESMAN_URL = os.getenv('RESMAN_URL')
     DATABASE_URL = os.getenv('DATABASE_URL')
-    SYNC_TOKEN = os.getenv('SYNC_TOKEN')
+    SYNC_USER_TOKEN = os.getenv('SYNC_USER_TOKEN')
+    SYNC_GROUP_TOKEN = os.getenv('SYNC_GROUP_TOKEN')
 
 settings = Settings()

@@ -1,9 +1,11 @@
 from database.db import Base
 from sqlalchemy import Column, String
+from sqlalchemy.orm import relationship
+
 
 class Users(Base):
     __tablename__ = "users"
 
-    id = Column(String, primary_key=True, index=True)
+    line_id = Column(String, unique = True, primary_key=True)
     initial = Column(String, unique = True, index=True)
-    line_id = Column(String, unique = True)
+    user_groups = relationship("UserGroup", back_populates="user")

@@ -32,19 +32,24 @@ async def callback(body, x_line_signature):
 
 @handler.add(MessageEvent, message=TextMessageContent)
 def handle_message(event):
-    command,args = parse_user_command(event.message.text)
+    command = parse_user_command(event.message.text)
     handler_func = route_map.get(command)
-    print(command, args)
+    print(command)
 
     if handler_func:
         try:
             if asyncio.iscoroutinefunction(handler_func):
                 asyncio.create_task(
-                    run_async_handler(handler_func, args, event)
+                    run_async_handler(handler_func, event)
                 )
             else:
-                reply_text = handler_func(*args)
-                send_reply(event.reply_token, reply_text)
+                reply_text = None
+                if "event" in inspect.signature(handler_func).parameters:
+                    reply_text = handler_func(event=event)
+                else:
+                    reply_text = handler_func()
+                if reply_text is not None:
+                    send_reply(event.reply_token, reply_text)
         except Exception as e:
             print(f"Error in handler_func: {e}")
             return None
@@ -59,13 +64,13 @@ def send_reply(reply_token, reply_text):
             )
         )
 
-async def run_async_handler(handler_func, args, event):
+async def run_async_handler(handler_func, event):
     try:
         reply_text = None
         if "event" in inspect.signature(handler_func).parameters:
-            reply_text = await handler_func(*args,event=event)
+            reply_text = await handler_func(event=event)
         else:
-            reply_text = await handler_func(*args)
+            reply_text = await handler_func()
         if reply_text is not None:
             send_reply(event.reply_token, reply_text)
     except Exception as e:
