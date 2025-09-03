@@ -1,7 +1,23 @@
 import uvicorn
 from fastapi import FastAPI
 from controllers.line_controller import router
-app = FastAPI(title="Bot API")
+
+from apscheduler.schedulers.background import BackgroundScheduler
+from contextlib import asynccontextmanager
+
+def test():
+    print("halo")
+@asynccontextmanager
+async def lifespan(_:FastAPI):
+    print("Starting scheduler")
+    scheduler = BackgroundScheduler()
+    scheduler.add_job(id="reminder_request",func=test, trigger="interval",seconds=10)
+    scheduler.start()
+    yield
+    print("Stopping scheduler")
+    scheduler.shutdown(wait=False)
+
+app = FastAPI(title="Bot API",lifespan=lifespan)
 
 app.include_router(router)
 
