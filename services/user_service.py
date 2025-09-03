@@ -9,6 +9,12 @@ from models.groups import Groups
 
 async def get_user_by_positions(position: Position,group_id: str):
     positions = position_map.get(position, [])
+    if group_id is None:
+        ast_data = await get_assistant_semester_data(positions)
+        text_template_parts = []
+        for ast in ast_data:
+            text_template_parts.append(f"@{ast.initial}")
+        return TextMessageV2(text="Maklo, " + " ".join(text_template_parts) + "!")
     
     try:
         from services.group_service import get_member_by_group_id
