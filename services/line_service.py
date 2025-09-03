@@ -5,7 +5,7 @@ from linebot.v3.messaging import (
     Configuration, 
     ReplyMessageRequest
 )
-from routes.route import route_map
+from routes.route import ROUTE_MAPS
 from core.config import settings
 from linebot.v3 import WebhookHandler
 from linebot.v3.webhooks import MessageEvent, TextMessageContent
@@ -18,7 +18,6 @@ configuration = Configuration(access_token=settings.ACCESS_TOKEN)
 handler = WebhookHandler(channel_secret=settings.CHANNEL_SECRET)
 
 from fastapi import HTTPException
-
 
 async def callback(body, x_line_signature):
     body_str = body.decode('utf-8')
@@ -33,8 +32,8 @@ async def callback(body, x_line_signature):
 @handler.add(MessageEvent, message=TextMessageContent)
 def handle_message(event):
     command = parse_user_command(event.message.text)
-    handler_func = route_map.get(command)
-    print(command)
+    handler_func = ROUTE_MAPS.get(command)
+    print(event)
 
     if handler_func:
         try:

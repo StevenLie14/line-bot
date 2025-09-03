@@ -5,6 +5,7 @@ from services import line_service
 
 router = APIRouter()
 
+
 @router.post("/callback")
 async def callback(request: Request, x_line_signature: str = Header(None)):
     body = await request.body()

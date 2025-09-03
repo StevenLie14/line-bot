@@ -93,7 +93,7 @@ position_map = {
     Position.HEAD: ["Head - KMG"]
 }
 
-day_map = {
+DAY_MAPS = {
     1: "Monday",
     2: "Tuesday",
     3: "Wednesday",
@@ -103,8 +103,16 @@ day_map = {
     7: "Sunday"
 }
 
-shift_map = {
+SHIFT_MAPS = {
     "M": "Night",
     "P": "Morning",
     "N": "Normal"
 }
+
+SHIFT_HOURS = {
+    "P": {"start": 7, "end": 15, "label": "07:00 - 15:00"},
+    "M": {"start": 11, "end": 19, "label": "11:00 - 19:00"},
+    "N": {"start": 9, "end": 19, "label": "09:00 - 19:00"},
+}
+
+SCHEDULE_START_HOUR = 7
