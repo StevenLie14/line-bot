@@ -10,8 +10,8 @@ from models.resman import (
         
 async def get_assistant_semester_data(positions: list[str]) -> list[AssistantSemesterData]:
     try:
-        raw_data = await get(f"{settings.RESMAN_URL}Assistant/AssistantSemesterData?Positions={','.join(positions)}")
-        return [AssistantSemesterData(**item) for item in raw_data['assistantSemesterData']]
+        raw_data = await get(f"{settings.RESMAN_URL}Assistant/AssistantSemesterData/Active?Position={';'.join(positions)}")
+        return [AssistantSemesterData(**item) for item in raw_data['data']]
     except Exception as e:
         print(f"An error occurred while getting the assistant semester data: {e}")
         raise e
