@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 class ScheduleDetail(BaseModel):
     id: str
@@ -10,4 +10,4 @@ class Schedule(BaseModel):
     initial: str
     leader: str
     shift: str
-    scheduleDetails: list[ScheduleDetail | None] 
+    schedule_details: list[ScheduleDetail | None] = Field(alias='scheduleDetails')

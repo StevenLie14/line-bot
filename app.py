@@ -1,17 +1,21 @@
 import uvicorn
 from fastapi import FastAPI
 from controllers.line_controller import router
-
-from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from contextlib import asynccontextmanager
+from repositories import request_repository
 
-def test():
-    print("halo")
+scheduler = AsyncIOScheduler()
+
+@scheduler.scheduled_job("cron",hour="12",minute="47",second="30")
+async def test():
+    data = await request_repository.get_active_request()
+    print(data)
+
 @asynccontextmanager
 async def lifespan(_:FastAPI):
     print("Starting scheduler")
-    scheduler = BackgroundScheduler()
-    scheduler.add_job(id="reminder_request",func=test, trigger="interval",seconds=10)
+    
     scheduler.start()
     yield
     print("Stopping scheduler")

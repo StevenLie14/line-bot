@@ -1,11 +1,11 @@
 from linebot.v3.messaging import TextMessageV2
-from services import resman_service
+from repositories import resman_repository
 from core.constant import DAY_MAPS, SHIFT_MAPS, SHIFT_HOURS, SCHEDULE_START_HOUR
 from models.resman import Schedule, Semester
 
 async def get_assistant_shift(initial: str):
     try:
-        data = await resman_service.get_assistant_shift(initial)
+        data = await resman_repository.get_assistant_shift(initial)
 
         messages = []
 
@@ -78,8 +78,8 @@ def format_schedule(schedules: list[Schedule], semester: Semester) -> TextMessag
 
 async def get_schedule_by_generation(generation: str, day: str, mid_code: str):
     try:
-        semester = await resman_service.get_active_semester()
-        schedules = await resman_service.get_schedule_by_generation(generation, day, mid_code)
+        semester = await resman_repository.get_active_semester()
+        schedules = await resman_repository.get_schedule_by_generation(generation, day, mid_code)
         return format_schedule(schedules, semester)
 
     except KeyError:
@@ -90,8 +90,8 @@ async def get_schedule_by_generation(generation: str, day: str, mid_code: str):
 
 async def get_schedule_by_position(position: str, day: str, mid_code: str):
     try:        
-        semester = await resman_service.get_active_semester()
-        schedules = await resman_service.get_schedule_by_position(position, day, mid_code)
+        semester = await resman_repository.get_active_semester()
+        schedules = await resman_repository.get_schedule_by_position(position, day, mid_code)
         return format_schedule(schedules, semester)
 
     except KeyError:
@@ -103,8 +103,8 @@ async def get_schedule_by_position(position: str, day: str, mid_code: str):
 
 async def get_schedule_by_initials(initials: str,day: str, mid_code: str):
     try:
-        semester = await resman_service.get_active_semester()
-        schedules = await resman_service.get_schedule_by_initials(initials, day, mid_code,semester.semesterId)
+        semester = await resman_repository.get_active_semester()
+        schedules = await resman_repository.get_schedule_by_initials(initials, day, mid_code,semester.semesterId)
         return format_schedule(schedules, semester)
 
     except KeyError:
