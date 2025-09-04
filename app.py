@@ -7,8 +7,8 @@ from repositories import request_repository
 
 scheduler = AsyncIOScheduler()
 
-@scheduler.scheduled_job("cron",hour="12",minute="47",second="30")
-async def test():
+@scheduler.scheduled_job("cron",hour="7",minute="20",second="0")
+async def reminder_job():
     data = await request_repository.get_active_request()
     print(data)
 

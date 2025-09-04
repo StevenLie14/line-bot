@@ -1,5 +1,5 @@
 from core.constant import Position, position_map
-from services.resman_service import get_assistant_semester_data
+from repositories.resman_repository import get_assistant_semester_data
 from linebot.v3.messaging import UserMentionTarget, MentionSubstitutionObject, TextMessageV2
 from database.db import get_database
 from models.users import Users

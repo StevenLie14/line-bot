@@ -7,6 +7,9 @@ from controllers.schedule_contoller import (
 from controllers.group_controller import (
     sync_user_to_group_id, sync_group_id
 )
+from controllers.request_controller import (
+    get_active_tickets
+)
 
 ROUTE_MAPS = {
     "/rnd" : get_active_rnd,
@@ -22,5 +25,6 @@ ROUTE_MAPS = {
     "/sync_user_group" : sync_user_to_group_id,
     "/schedule" : get_schedule_by_initials,
     "/schedule_gen" : get_schedule_by_generation,
-    "/schedule_pos" : get_schedule_by_position
+    "/schedule_pos" : get_schedule_by_position,
+    "/tickets" : get_active_tickets
 }
