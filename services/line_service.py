@@ -3,7 +3,9 @@ from linebot.v3.messaging import (
     ApiClient, 
     MessagingApi, 
     Configuration, 
-    ReplyMessageRequest
+    ReplyMessageRequest,
+    TextMessageV2,
+    PushMessageRequest
 )
 from routes.route import ROUTE_MAPS
 from core.config import settings
@@ -61,6 +63,13 @@ def send_reply(reply_token, reply_text):
                 reply_token=reply_token,
                 messages=[reply_text]
             )
+        )
+        
+def send_message(id, messages: list[TextMessageV2]):
+    with ApiClient(configuration) as api_client:
+        line_bot_api = MessagingApi(api_client)
+        line_bot_api.push_message(
+            push_message_request=PushMessageRequest(to=id,messages=messages)
         )
 
 async def run_async_handler(handler_func, event):

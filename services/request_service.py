@@ -1,8 +1,9 @@
 from models.request.ticket import Ticket
 from datetime import datetime
 from repositories import request_repository
+from services import line_service, user_service
 from linebot.v3.messaging import UserMentionTarget, MentionSubstitutionObject, TextMessageV2
-
+from core.constant import Position
 
 async def format_ticket_summary(tickets : list[Ticket],group_id: str):
     tickets_by_handler = {}
@@ -92,14 +93,58 @@ async def format_ticket_summary(tickets : list[Ticket],group_id: str):
         print(f"An error occurred: {e}")
         return TextMessageV2(text="An error occurred while processing the schedule.")
 
+async def format_new_ticket_notification(ticket: Ticket, group_id: str | None):
+    try:
+        if ticket.ticket_type.type_name in ("DBA"):
+            mention = await user_service.get_user_by_positions(Position.DBA, None if group_id is None else group_id)
+        else:
+            mention = await user_service.get_user_by_positions(Position.RND, None if group_id is None else group_id)
+
+        header = (
+            f"{mention.text}\n"
+            f"New Ticket Notification - {datetime.now().strftime('%Y-%m-%d %H:%M')}\n"
+            "A new ticket has been created and requires attention."
+        )
+
+        ticket_block = (
+            f"Title: {ticket.title}\n"
+            f"ID: {ticket.id}\n"
+            f"Urgency: {ticket.ticket_urgency.urgency_name}\n"
+            f"Status: {ticket.ticket_state.state_name}\n"
+            f"Description: \n{ticket.description or 'No description provided.'}"
+        )
+
+        closing = "Please follow up on this ticket as soon as possible."
+
+        return [TextMessageV2(
+            text="\n\n".join([header, ticket_block, closing]),
+            substitution=mention.substitution
+        )]
+
+    except KeyError:
+        return TextMessageV2(text="Failed to retrieve data from RESMAN.")
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return TextMessageV2(text="An error occurred while processing the new ticket.")
+    
 async def get_active_tickets(group_id: str):
     try:
-
         tickets = await request_repository.get_active_request()
-
         return await format_ticket_summary(tickets, group_id)
     except KeyError:
         return TextMessageV2(text="Failed to retrieve data from RESMAN.")
     except Exception as e:
         print(f"An error occurred: {e}")
         return TextMessageV2(text="An error occurred while processing the schedule.")
+    
+async def notify_new_ticket(ticket: Ticket):
+    try:
+        group_id = "C5e12a8842bd47da7cb6210f1ef7d2ffe"
+        user_id = "U07a7890f1a03d16370198ffeb071f201"
+        messages = await format_new_ticket_notification(ticket, group_id)
+        line_service.send_message(group_id, messages)
+        return "Success"
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return
+    

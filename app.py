@@ -1,6 +1,7 @@
 import uvicorn
 from fastapi import FastAPI
 from controllers.line_controller import router
+from controllers.request_controller import router as request_router
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from contextlib import asynccontextmanager
 from repositories import request_repository
@@ -24,6 +25,7 @@ async def lifespan(_:FastAPI):
 app = FastAPI(title="Bot API",lifespan=lifespan)
 
 app.include_router(router)
+app.include_router(request_router)
 
 if __name__ == "__main__":
     uvicorn.run("app:app", host="0.0.0.0", port=8000, reload=True)

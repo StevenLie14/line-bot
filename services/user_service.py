@@ -64,7 +64,7 @@ async def get_all_users():
     with get_database() as db:
         return db.query(Users).all()
     
-async def sync_line_id(initial: str, line_id: str, group_id: str):
+async def sync_line_id(initial: str, line_id: str):
     with get_database() as db:
         try:
             user = db.query(Users).filter(Users.initial == initial.upper()).first()
