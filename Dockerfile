@@ -10,7 +10,8 @@ RUN apk add --no-cache \
 WORKDIR /app
 
 COPY ./requirements.txt ./
-RUN pip install --no-cache-dir --user -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt \
+    && pip install --no-cache-dir gunicorn==23.00
 
 FROM python:3.12-alpine AS runner
 
