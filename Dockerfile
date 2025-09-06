@@ -17,11 +17,9 @@ FROM python:3.12-alpine AS runner
 
 WORKDIR /app
 
-COPY --from=builder /root/.local /root/.local
-
+COPY --from=builder /usr/local /usr/local
 COPY . .
 
-ENV PATH=/root/.local/bin:$PATH
 
 RUN adduser -D appuser
 USER appuser

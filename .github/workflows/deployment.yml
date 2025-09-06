@@ -7,6 +7,7 @@ on:
 
 jobs:
   build:
+    if: github.repository == 'slc-rdt/line-bot'
     runs-on: docker-apps
     steps:
       - name: Git Checkout Repository
@@ -28,6 +29,7 @@ jobs:
           tags: ${{ secrets.REGISTRY_URL }}/slc-rdt/line-bot:latest
 
   deploy:
+    if: github.repository == 'slc-rdt/line-bot'
     runs-on: docker-apps
     needs: build
     steps:
