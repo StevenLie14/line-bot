@@ -27,9 +27,7 @@ class RequestService:
         mention_counter = 1
 
         try:
-            all_members : list[UserGroup] = (
-                await self.group_repository.get_members_by_group_id(group_id) if group_id else []
-            )
+            all_members =  self.group_repository.get_members_by_group_id(group_id) if group_id else []
             user_map = {member.user.initial: member.user for member in all_members}
 
             for ticket in tickets:
@@ -138,12 +136,11 @@ class RequestService:
                 "Please follow up on this ticket as soon as possible."
             )
 
-            return [
-                TextMessageV2(
+            return TextMessageV2(
                     text=message,
                     substitution=mention.substitution,
                 )
-            ]
+            
 
         except KeyError:
             return TextMessageV2(text="Failed to retrieve data from RESMAN.")

@@ -35,14 +35,14 @@ line_route_registry.register_routes(resman_controller.get_routes())
 
 scheduler = AsyncIOScheduler()
 
-@scheduler.scheduled_job("cron",hour="7",minute="20",second="0")
+@scheduler.scheduled_job("cron",hour="07",minute="20",second="00")
 async def reminder_job():
-    await request_controller.get_active_tickets()
+    message = await request_service.get_active_tickets(settings.RNDBA_GROUP_ID)
+    line_service.send_message(settings.RNDBA_GROUP_ID,[message])
 
 @asynccontextmanager
 async def lifespan(_:FastAPI):
     print("Starting scheduler")
-    
     scheduler.start()
     yield
     print("Stopping scheduler")
