@@ -5,6 +5,7 @@ from controllers.request_controller import router as request_router
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from contextlib import asynccontextmanager
 from repositories import request_repository
+from fastapi.routing import APIRoute
 
 scheduler = AsyncIOScheduler()
 
@@ -22,7 +23,7 @@ async def lifespan(_:FastAPI):
     print("Stopping scheduler")
     scheduler.shutdown(wait=False)
 
-app = FastAPI(title="Bot API",lifespan=lifespan)
+app = FastAPI(title="Bot API",lifespan=lifespan,root_path="/line")
 
 app.include_router(router)
 app.include_router(request_router)
