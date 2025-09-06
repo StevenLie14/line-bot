@@ -18,6 +18,7 @@ class Settings:
     @staticmethod
     def _require(key: str) -> str:
         value = os.getenv(key)
+        print (f"Key {key}: Value {value}")
         if value is None:
             raise EnvironmentError(f"Missing required environment variable: {key}")
         return value
