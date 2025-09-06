@@ -1,14 +1,20 @@
 services:
-
-  fastapi-app:
-    container_name: fastapi-app
-    image: fastapi-app
-    build:
-      context: .
-      dockerfile: Dockerfile
+  linebot:
+    tty: true
+    pull_policy: always
+    restart: unless-stopped
+    image: registry.slc.net/slc-rdt/line-bot:latest
+    container_name: line-bot
     ports:
       - "${APP_PORT}:${APP_PORT}"
-    volumes:
-      - ./app:/app/src
-    env_file:
-      - .env
+    environment:
+      - LINE_ACCESS_TOKEN=${LINE_ACCESS_TOKEN}
+      - LINE_CHANNEL_SECRET=${LINE_CHANNEL_SECRET}
+      - RESMAN_URL=${RESMAN_URL}
+      - DATABASE_URL=${DATABASE_URL}
+      - SYNC_USER_TOKEN=${SYNC_USER_TOKEN}
+      - SYNC_GROUP_TOKEN=${SYNC_GROUP_TOKEN}
+      - REQUEST_SLC_URL=${REQUEST_SLC_URL}
+      - REQUEST_SLC_TOKEN=${REQUEST_SLC_TOKEN}
+      - RNDBA_GROUP_ID=${RNDBA_GROUP_ID}
+      - APP_PORT=${APP_PORT}
