@@ -1,6 +1,6 @@
 from enum import Enum
 
-positions = [
+POSITIONS = [
         "Ast - ALS (J)",
         "Ast - ALS (S)",
         "Ast - BKS (J)",
@@ -43,7 +43,7 @@ class Position(Enum):
     RESMAN = "resman"
     HEAD = "head"
 
-position_map = {
+POSITION_MAPS = {
     Position.AST: [
         "Ast - ALS (J)",
         "Ast - ALS (S)",
