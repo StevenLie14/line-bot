@@ -4,6 +4,7 @@ from repositories import request_repository
 from services import line_service, user_service
 from linebot.v3.messaging import UserMentionTarget, MentionSubstitutionObject, TextMessageV2
 from core.constant import Position
+from core.config import settings
 
 async def format_ticket_summary(tickets : list[Ticket],group_id: str):
     tickets_by_handler = {}
@@ -139,10 +140,8 @@ async def get_active_tickets(group_id: str):
     
 async def notify_new_ticket(ticket: Ticket):
     try:
-        group_id = "C5e12a8842bd47da7cb6210f1ef7d2ffe"
-        user_id = "U07a7890f1a03d16370198ffeb071f201"
-        messages = await format_new_ticket_notification(ticket, group_id)
-        line_service.send_message(group_id, messages)
+        messages = await format_new_ticket_notification(ticket, settings.RNDBA_GROUP_ID)
+        line_service.send_message(settings.RNDBA_GROUP_ID, messages)
         return "Success"
     except Exception as e:
         print(f"An error occurred: {e}")

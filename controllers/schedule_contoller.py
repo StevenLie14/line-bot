@@ -2,7 +2,6 @@ from services import resman_service
 from linebot.v3.webhooks import MessageEvent
 from utils.helper import parse_user_args
 from linebot.v3.messaging import TextMessageV2
-    # line_service.send_message("U07a7890f1a03d16370198ffeb071f201", "test")
 
 async def get_assistant_shift(event : MessageEvent):
     args = parse_user_args(event.message.text)

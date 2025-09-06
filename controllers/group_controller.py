@@ -1,6 +1,3 @@
-from services import user_service
-from core.constant import Position
-from sqlalchemy.orm import Session
 from linebot.v3.webhooks import MessageEvent
 from core.config import settings
 from linebot.v3.messaging import TextMessageV2

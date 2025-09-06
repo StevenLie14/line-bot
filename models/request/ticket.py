@@ -7,7 +7,7 @@ from models.request.ticket_type import TicketType
 from typing import Optional
 
 class Ticket(BaseModel):
-    id: str
+    id: str 
     title: str
     description: str
     solvedAt: datetime

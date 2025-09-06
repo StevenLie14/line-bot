@@ -16,8 +16,8 @@ import asyncio
 import inspect
 
 
-configuration = Configuration(access_token=settings.ACCESS_TOKEN)
-handler = WebhookHandler(channel_secret=settings.CHANNEL_SECRET)
+configuration = Configuration(access_token=settings.LINE_ACCESS_TOKEN)
+handler = WebhookHandler(channel_secret=settings.LINE_CHANNEL_SECRET)
 
 from fastapi import HTTPException
 
