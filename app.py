@@ -45,12 +45,14 @@ async def reminder_job():
 async def lifespan(_:FastAPI):
     if scheduler.running or int(os.environ.get("APSC", "1")) == 0:
         print("Scheduler already running")
-        return
-    print("Starting scheduler")
-    scheduler.start()
+    else: 
+        print("Starting scheduler")
+        scheduler.start()
     yield
     print("Stopping scheduler")
     scheduler.shutdown(wait=False)
+    request_repository.close()
+    resman_repository.close()
 
 
 app = FastAPI(title="Bot API",lifespan=lifespan,root_path="/line")
