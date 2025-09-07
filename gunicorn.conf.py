@@ -21,3 +21,21 @@ loglevel = "info"
 timeout=30
 
 preload_app = True
+
+APSC_WORKER = None
+
+def pre_fork(server, worker):
+    global APSC_WORKER
+    global preload_app
+    if APSC_WORKER is None and not preload_app:
+        APSC_WORKER = worker
+        
+def post_fork(server, worker):
+    global APSC_WORKER
+    os.environ["WORKER_PID"] = str(worker.pid)
+    os.environ["APSC"] = "1" if worker == APSC_WORKER else "0"
+    
+def child_exit(server, worker):
+    global APSC_WORKER
+    if worker == APSC_WORKER:
+        APSC_WORKER = None

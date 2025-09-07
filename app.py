@@ -7,6 +7,7 @@ from routes import LineRouteRegistry
 from services import LineService, GroupService, UserService, RequestService, ResmanService
 from repositories import GroupRepository, UserRepository, RequestRepository, ResmanRepository
 from core import settings
+import os
 
 line_route_registry = LineRouteRegistry()
 
@@ -42,6 +43,9 @@ async def reminder_job():
 
 @asynccontextmanager
 async def lifespan(_:FastAPI):
+    if scheduler.running or int(os.environ.get("APSC", "1")) == 0:
+        print("Scheduler already running")
+        return
     print("Starting scheduler")
     scheduler.start()
     yield
