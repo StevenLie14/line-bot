@@ -35,8 +35,6 @@ def post_fork(server, worker):
     global APSC_WORKER
     os.environ["WORKER_PID"] = str(worker.pid)
     os.environ["APSC"] = "1" if worker == APSC_WORKER else "0"
-    print(f"APSC: {os.environ['APSC']}")
-    print(f"WORKER_PID: {os.environ['WORKER_PID']}")
     
 def child_exit(server, worker):
     global APSC_WORKER
