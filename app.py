@@ -33,10 +33,12 @@ line_route_registry.register_routes(group_controller.get_routes())
 line_route_registry.register_routes(user_controller.get_routes())
 line_route_registry.register_routes(request_controller.get_routes())
 line_route_registry.register_routes(resman_controller.get_routes())
+from pytz import timezone
 
-scheduler = AsyncIOScheduler()
+scheduler = AsyncIOScheduler(timezone=timezone("Asia/Jakarta"))
 
-@scheduler.scheduled_job("cron",hour="07",minute="20",second="00")
+# @scheduler.scheduled_job("cron",hour="07",minute="20",second="00")
+@scheduler.scheduled_job("interval", seconds=10)
 async def reminder_job():
     message = await request_service.get_active_tickets(settings.RNDBA_GROUP_ID)
     line_service.send_message(settings.RNDBA_GROUP_ID,[message])
