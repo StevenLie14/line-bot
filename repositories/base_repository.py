@@ -18,6 +18,9 @@ class BaseRepository:
             raise ConnectionError(f"Failed to retrieve data from {url}") from e
         except json.JSONDecodeError as e:
             raise ValueError("Failed to parse an invalid JSON response from the server.") from e
+        except Exception as e:
+            print(f"An error occurred while getting data from {url}: {e}")
+            raise e
 
     async def post(self, endpoint: str, data: dict, headers: dict = None) -> dict:
         url = f"{self.base_url}{endpoint}"
@@ -29,6 +32,9 @@ class BaseRepository:
             raise ConnectionError(f"Failed to retrieve data from {url}") from e
         except json.JSONDecodeError as e:
             raise ValueError("Failed to parse an invalid JSON response from the server.") from e
+        except Exception as e:
+            print(f"An error occurred while getting data from {url}: {e}")
+            raise e
 
     async def close(self):
         await self.client.aclose()

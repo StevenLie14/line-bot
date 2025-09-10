@@ -167,8 +167,8 @@ class RequestService:
             messages = await self.format_new_ticket_notification(
                 ticket, settings.RNDBA_GROUP_ID
             )
-            self.line_service.send_message(settings.RNDBA_GROUP_ID, messages)
+            self.line_service.send_message(settings.RNDBA_GROUP_ID, [messages])
             return "Success"
         except Exception as e:
             print(f"An error occurred: {e}")
-            return
+            return "Failed"

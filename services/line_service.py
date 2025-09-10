@@ -69,15 +69,23 @@ class LineService:
             print(f"Error in async handler: {e}")
 
     def send_reply(self, reply_token, reply_text: TextMessageV2):
-        with ApiClient(self.configuration) as api_client:
-            line_bot_api = MessagingApi(api_client)
-            line_bot_api.reply_message(
-                ReplyMessageRequest(reply_token=reply_token, messages=[reply_text])
-            )
+        try:
+            with ApiClient(self.configuration) as api_client:
+                line_bot_api = MessagingApi(api_client)
+                line_bot_api.reply_message(
+                    ReplyMessageRequest(reply_token=reply_token, messages=[reply_text])
+                )
+        except Exception as e:
+            print(f"Error while sending reply: {e}")
+            raise e
 
     def send_message(self, id: str, messages: list[TextMessageV2]):
-        with ApiClient(self.configuration) as api_client:
-            line_bot_api = MessagingApi(api_client)
-            line_bot_api.push_message(
-                push_message_request=PushMessageRequest(to=id, messages=messages)
-            )
+        try:
+            with ApiClient(self.configuration) as api_client:
+                line_bot_api = MessagingApi(api_client)
+                line_bot_api.push_message(
+                    push_message_request=PushMessageRequest(to=id, messages=messages)
+                )
+        except Exception as e:
+            print(f"Error while sending message: {e}")
+            raise e

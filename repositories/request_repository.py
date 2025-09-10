@@ -18,6 +18,6 @@ class RequestRepository(BaseRepository):
                 ticket for ticket in all_tickets
                 if ticket.ticket_state.state_name not in ("Resolved", "Wait Confirmation", "Cancelled")
             ]
-        except (ConnectionError, ValueError) as e:
+        except Exception as e:
             print(f"An error occurred while getting active requests: {e}")
             raise e
