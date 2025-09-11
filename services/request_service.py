@@ -127,12 +127,12 @@ class RequestService:
             message = (
                 f"{mention.text}\n"
                 f"New Ticket Notification - {datetime.now().strftime('%Y-%m-%d %H:%M')}\n"
-                "A new ticket has been created and requires attention."
+                "A new ticket has been created and requires attention.\n\n"
                 f"Title: {ticket.title}\n"
                 f"ID: {ticket.id}\n"
                 f"Urgency: {ticket.ticket_urgency.urgency_name}\n"
                 f"Status: {ticket.ticket_state.state_name}\n"
-                f"Description: \n{ticket.description or 'No description provided.'}\n"
+                f"Description: \n\n{ticket.description or 'No description provided.'}\n\n"
                 "Please follow up on this ticket as soon as possible."
             )
 
