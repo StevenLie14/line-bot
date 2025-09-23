@@ -10,6 +10,7 @@ from linebot.v3.messaging import (
 )
 from core import Position, settings
 from models import UserGroup
+from utils import Helper
 
 
 class RequestService:
@@ -125,7 +126,7 @@ class RequestService:
 
             message = (
                 f"{mention.text}\n"
-                f"New Ticket Notification - {datetime.now().strftime('%Y-%m-%d %H:%M')}\n"
+                f"New Ticket Notification - {Helper.get_current_time()}\n"
                 "A new ticket has been created and requires attention.\n\n"
                 f"Title: {ticket.title}\n"
                 f"Urgency: {ticket.ticket_urgency.urgency_name}\n"
