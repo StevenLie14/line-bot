@@ -44,11 +44,15 @@ class UserController(BaseController):
             },
             "/head": {
                 "handler": self.get_active_head,
-                "description": "Show all active Head tickets. Usage: /head"
+                "description": "Show all active Head tickets. Usage: /head",
+                "active": False
+
             },
             "/part": {
                 "handler": self.get_active_part,
-                "description": "Show all active Part tickets. Usage: /part"
+                "description": "Show all active Part tickets. Usage: /part",
+                "active": False
+
             }
         }
 

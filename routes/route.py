@@ -12,5 +12,5 @@ class LineRouteRegistry:
         return self.routes.get(command)
         
     def get_active_routes(self) -> dict[str, Route]:
-        return {cmd: route for cmd, route in self.routes.items() if route["active"]}
+        return {cmd: route for cmd, route in self.routes.items() if route.get("active", False)}
     

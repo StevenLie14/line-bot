@@ -8,6 +8,9 @@ from services import LineService, GroupService, UserService, RequestService, Res
 from repositories import GroupRepository, UserRepository, RequestRepository, ResmanRepository
 from core import settings
 import os
+from pytz import timezone
+
+
 
 line_route_registry = LineRouteRegistry()
 
@@ -33,7 +36,6 @@ line_route_registry.register_routes(group_controller.get_routes())
 line_route_registry.register_routes(user_controller.get_routes())
 line_route_registry.register_routes(request_controller.get_routes())
 line_route_registry.register_routes(resman_controller.get_routes())
-from pytz import timezone
 
 scheduler = AsyncIOScheduler(timezone=timezone("Asia/Jakarta"))
 
