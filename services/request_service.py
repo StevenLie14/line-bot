@@ -75,8 +75,8 @@ class RequestService:
                 for i, ticket in enumerate(assigned_tickets, start=1):
                     ticket_detail = (
                         f"{i}. {ticket.title}  ({ticket.ticket_urgency.urgency_name})\n"
-                        f"   - ID: {ticket.id}\n"
                         f"   - Status: {ticket.ticket_state.state_name}"
+                        f"   - Creator: {ticket.creator.initial} ({ticket.creator.name})"
                     )
                     handler_block_parts.append(ticket_detail)
 
@@ -88,7 +88,6 @@ class RequestService:
                 for i, ticket in enumerate(unassigned_tickets, start=1):
                     ticket_detail = (
                         f"{i}. {ticket.title}\n"
-                        f"   - ID: `{ticket.id}`\n"
                         f"   - Status: {ticket.ticket_state.state_name}\n"
                         f"   - Description: {ticket.description}"
                     )
@@ -129,9 +128,9 @@ class RequestService:
                 f"New Ticket Notification - {datetime.now().strftime('%Y-%m-%d %H:%M')}\n"
                 "A new ticket has been created and requires attention."
                 f"Title: {ticket.title}\n"
-                f"ID: {ticket.id}\n"
                 f"Urgency: {ticket.ticket_urgency.urgency_name}\n"
                 f"Status: {ticket.ticket_state.state_name}\n"
+                f"Creator: {ticket.creator.initial} ({ticket.creator.name})\n"
                 f"Description: \n{ticket.description or 'No description provided.'}\n"
                 "Please follow up on this ticket as soon as possible."
             )

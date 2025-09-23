@@ -12,14 +12,44 @@ class UserController(BaseController):
         super().__init__()
         self.user_service = user_service
         self.line_routes = {
-            "/rnd": self.get_active_rnd,
-            "/dba": self.get_active_dba,
-            "/na": self.get_active_na,
-            "/op": self.get_active_op,
-            "/resman": self.get_active_resman,
-            "/head": self.get_active_head,
-            "/part": self.get_active_part,
-            "/sync_id": self.sync_line_id,
+            "/sync_id": {
+                "handler": self.sync_line_id,
+                "description": "Sync your Line ID and Initial with the system. Usage: /sync_id <initial> <token>",
+                "active": True
+            },
+            "/rnd": {
+                "handler": self.get_active_rnd,
+                "description": "Show all active RnD tickets. Usage: /rnd",
+                "active": True
+            },
+            "/dba": {
+                "handler": self.get_active_dba,
+                "description": "Show all active DBA tickets. Usage: /dba",
+                "active": True
+            },
+            "/na": {
+                "handler": self.get_active_na,
+                "description": "Show all active NA tickets. Usage: /na",
+                "active": True
+            },
+            "/op": {
+                "handler": self.get_active_op,
+                "description": "Show all active OP tickets. Usage: /op",
+                "active": True
+            },
+            "/resman": {
+                "handler": self.get_active_resman,
+                "description": "Show all active Resman tickets. Usage: /resman",
+                "active": True
+            },
+            "/head": {
+                "handler": self.get_active_head,
+                "description": "Show all active Head tickets. Usage: /head"
+            },
+            "/part": {
+                "handler": self.get_active_part,
+                "description": "Show all active Part tickets. Usage: /part"
+            }
         }
 
     async def get_active_rnd(self, event: MessageEvent):
@@ -45,11 +75,20 @@ class UserController(BaseController):
 
     async def sync_line_id(self, event: MessageEvent):
         args = Helper.parse_user_args(event.message.text)
-        initial = args[0]
-        token = args[1]
+        try:
+            initial = args[0]
+            token = args[1]
+        except IndexError:
+            return TextMessageV2(text="Please provide your initial and Token")
         if token != settings.SYNC_USER_TOKEN:
             return TextMessageV2(text="Invalid sync token.")
 
         line_id = event.source.user_id
         await self.user_service.sync_line_id(initial, line_id)
         return TextMessageV2(text=f"Synced {initial} to {line_id}")
+
+    async def help(self, event: MessageEvent):
+        commands = list(self.line_routes.keys())
+        commands.sort()
+        help_text = "Available commands:\n" + "\n".join(commands)
+        return TextMessageV2(text=help_text)

@@ -11,14 +11,25 @@ class GroupController(BaseController):
         super().__init__()
         self.group_service = group_service
         self.line_routes = {
-            "/sync_group": self.sync_group_id,
-            "/sync_user_group": self.sync_user_to_group_id,
+            "/sync_group": {
+                "handler": self.sync_group_id,
+                "description": "Sync group name with group ID. Usage: /sync_group <group_name> <token>",
+                "active" : True
+            },
+            "/sync_user_group": {
+                "handler": self.sync_user_to_group_id,
+                "description": "Sync your user with current group. Usage: /sync_user_group <token>",
+                "active" : True
+            }
         }
 
     async def sync_group_id(self, event: MessageEvent):
         args = Helper.parse_user_args(event.message.text)
-        group_name = args[0]
-        token = args[1]
+        try:
+            group_name = args[0]
+            token = args[1]
+        except IndexError:
+            return TextMessageV2(text="Please provide your Group Name and Token")
         if token != settings.SYNC_GROUP_TOKEN:
             return TextMessageV2(text="Invalid sync token.")
 
@@ -28,7 +39,10 @@ class GroupController(BaseController):
 
     async def sync_user_to_group_id(self, event: MessageEvent):
         args = Helper.parse_user_args(event.message.text)
-        token = args[0]
+        try:
+            token = args[0]
+        except IndexError:
+            return TextMessageV2(text="Please provide your Token")
         if token != settings.SYNC_GROUP_TOKEN:
             return TextMessageV2(text="Invalid sync token.")
 

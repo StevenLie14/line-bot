@@ -89,3 +89,14 @@ class LineService:
         except Exception as e:
             print(f"Error while sending message: {e}")
             raise e
+        
+    def get_active_routes_message(self) -> TextMessageV2:
+        active_routes = self.route_registry.get_active_routes()
+        if not active_routes:
+            return TextMessageV2(text="No active commands available.")
+        
+        lines = ["📌 Available Commands:\n"]
+        for command, route in active_routes.items():
+            lines.append(f"{command} → {route['description']}")
+        
+        return TextMessageV2(text="\n".join(lines))

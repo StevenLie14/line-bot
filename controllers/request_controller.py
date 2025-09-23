@@ -3,6 +3,7 @@ from models.request.ticket import Ticket
 from services import RequestService
 from linebot.v3.webhooks import MessageEvent, UserSource
 from . import BaseController
+from linebot.v3.messaging import TextMessageV2
 
 class RequestController(BaseController):
     def __init__(self, request_service: RequestService):
@@ -11,12 +12,19 @@ class RequestController(BaseController):
         self.router.post("/api/notify")(self.notify_new_ticket)
         self.request_service = request_service
         self.line_routes = {
-            "/tickets" : self.get_active_tickets
-        }
+            "/tickets": {
+                "handler": self.get_active_tickets,
+                "description": "Show all active tickets in RnDBA group. Usage: /tickets",
+                "active" : True,
+            }
+}
 
     async def get_active_tickets(self, event: MessageEvent):
+        if isinstance(event.source, UserSource) and event.source.group_id is None:
+            return TextMessageV2(text="You must be in group RnDBA to use this command.")
+        
         return await self.request_service.get_active_tickets(
-            event.source.group_id if not isinstance(event.source, UserSource) else None
+            event.source.group_id
         )
 
     async def notify_new_ticket(self, ticket: Ticket):

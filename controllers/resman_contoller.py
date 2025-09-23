@@ -9,10 +9,27 @@ class ResmanController(BaseController):
         super().__init__()
         self.resman_service = resman_service
         self.line_routes = {
-            "/schedule": self.get_schedule_by_initials,
-            "/schedule_gen": self.get_schedule_by_generation ,
-            "/schedule_pos": self.get_schedule_by_position,
+        "/schedule": {
+            "handler": self.get_schedule_by_initials,
+            "description": "Get schedule by initials. Usage: /schedule <initials> <day> <mid_code>",
+            "active" : True,
+        },
+        "/schedule_gen": {
+            "handler": self.get_schedule_by_generation,
+            "description": "Get schedule by generation. Usage: /schedule_gen <generation> <day> <mid_code>",
+            "active" : True,
+        },
+        "/schedule_pos": {
+            "handler": self.get_schedule_by_position,
+            "description": "Get schedule by position. Usage: /schedule_pos <position> <day> <mid_code>",
+            "active" : True,
+        },
+        "/shift": {
+            "handler": self.get_assistant_shift,
+            "description": "Get assistant shift by initial. Usage: /shift <initial>",
+            "active" : True,
         }
+    }
         
     async def get_assistant_shift(self, event: MessageEvent):
         args = Helper.parse_user_args(event.message.text)
