@@ -4,6 +4,7 @@ from services import RequestService
 from linebot.v3.webhooks import MessageEvent, UserSource
 from . import BaseController
 from linebot.v3.messaging import TextMessageV2
+from core import settings
 
 class RequestController(BaseController):
     def __init__(self, request_service: RequestService):
@@ -20,8 +21,11 @@ class RequestController(BaseController):
 }
 
     async def get_active_tickets(self, event: MessageEvent):
-        if isinstance(event.source, UserSource) and event.source.group_id is None:
-            return TextMessageV2(text="You must be in group RnDBA to use this command.")
+        if isinstance(event.source, UserSource) and event.source.group_id is None :
+            return TextMessageV2(text="You must be in a group to use this command.")
+        
+        if event.source.group_id != settings.RNDBA_GROUP_ID:
+            return TextMessageV2(text="You must be in the RnDBA group to use this command.")
         
         return await self.request_service.get_active_tickets(
             event.source.group_id
