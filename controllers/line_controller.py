@@ -24,5 +24,5 @@ class LineController(BaseController):
         body = await request.body()
         return await self.line_service.callback(body, x_line_signature)
     
-    async def get_active_routes_message(self, event: MessageEvent):
-        return await self.line_service.get_active_routes_message()
+    def get_active_routes_message(self, event: MessageEvent):
+        return self.line_service.get_active_routes_message()
