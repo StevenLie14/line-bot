@@ -36,11 +36,14 @@ class LineService:
         @self.handler.add(MessageEvent, message=TextMessageContent)
         def handle_message(event):
             command = Helper.parse_user_command(event.message.text)
-            handler_func = self.route_registry.get_route(command)["handler"]
+            route = self.route_registry.get_route(command,None)
             print(f"Received event: {event}")
 
-            if handler_func is None:
-                self.send_reply(event.reply_token, "Command not found.")
+            if route is None:
+                return
+            
+            handler_func = route.get("handler",None)
+            if  handler_func is None:
                 return
 
             try:
