@@ -36,7 +36,7 @@ class LineService:
         @self.handler.add(MessageEvent, message=TextMessageContent)
         def handle_message(event):
             command = Helper.parse_user_command(event.message.text)
-            route = self.route_registry.get_route(command,None)
+            route = self.route_registry.get_route(command)
             print(f"Received event: {event}")
 
             if route is None:
