@@ -56,7 +56,6 @@ class ResmanService:
                 f"---"
             )
 
-            # collect all course details sorted by start time
             details = sorted(
                 [d for d in schedule.schedule_details if d],
                 key=lambda d: d.shift_schedule.start_time,
@@ -70,27 +69,23 @@ class ResmanService:
                 start_h = int(ss.start_time.split(":")[0])
                 end_h = int(ss.end_time.split(":")[0])
 
-                # fill free blocks before this course
                 if current_hour < start_h:
                     body_lines.append(
                         f"{current_hour:02}:00 - {start_h:02}:00 : Free"
                     )
 
-                # course block
                 body_lines.append(
                     f"{start_h:02}:00 - {end_h:02}:00 : "
-                    f"{detail.description} ({detail.type}) @ {detail.room}"
+                    f"{detail.description} ({detail.type})"
                 )
 
                 current_hour = end_h
 
-            # fill remaining free time until end of shift
             if current_hour < work_end_hour:
                 body_lines.append(
                     f"{current_hour:02}:00 - {work_end_hour:02}:00 : Free"
                 )
 
-            # show everything outside shift as Out of Shift
             if work_start_hour > SCHEDULE_START_HOUR:
                 body_lines.insert(
                     0,
