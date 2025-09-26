@@ -1,6 +1,6 @@
 from linebot.v3.messaging import TextMessageV2
 from repositories import ResmanRepository
-from core.constant import DAY_MAPS, SHIFT_MAPS, SHIFT_HOURS, SCHEDULE_START_HOUR
+from core.constant import DAY_MAPS, SHIFT_MAPS, SHIFT_HOURS, SCHEDULE_START_HOUR, SCHEDULE_END_HOUR
 from models.resman import Schedule, Semester
 
 
@@ -41,51 +41,67 @@ class ResmanService:
         messages = []
 
         for schedule in schedules:
-            schedule_text_parts = []
-
             shift_info = SHIFT_HOURS.get(
                 schedule.shift, {"start": 0, "end": 0, "label": "Unknown"}
             )
             work_start_hour = shift_info["start"]
             work_end_hour = shift_info["end"]
 
+            # Header
             header = (
                 f"Schedule for {schedule.initial}\n\n"
                 f"Semester : {semester.description}\n"
                 f"Leader: {schedule.leader}\n"
                 f"Shift: {schedule.shift} (Work Hours: {shift_info['label']})\n"
-                "---"
+                f"---"
             )
-            schedule_text_parts.append(header)
 
-            for i in range(6):
-                shift_num = i + 1
-                block_start_hour = SCHEDULE_START_HOUR + (i * 2)
-                block_end_hour = block_start_hour + 2
+            # collect all course details sorted by start time
+            details = sorted(
+                [d for d in schedule.schedule_details if d],
+                key=lambda d: d.shift_schedule.start_time,
+            )
 
-                block_title = (
-                    f"Shift {shift_num} ({block_start_hour:02}:00 - {block_end_hour:02}:00) :"
+            body_lines = []
+            current_hour = work_start_hour
+
+            for detail in details:
+                ss = detail.shift_schedule
+                start_h = int(ss.start_time.split(":")[0])
+                end_h = int(ss.end_time.split(":")[0])
+
+                # fill free blocks before this course
+                if current_hour < start_h:
+                    body_lines.append(
+                        f"{current_hour:02}:00 - {start_h:02}:00 : Free"
+                    )
+
+                # course block
+                body_lines.append(
+                    f"{start_h:02}:00 - {end_h:02}:00 : "
+                    f"{detail.description} ({detail.type}) @ {detail.room}"
                 )
 
-                current_hour = block_start_hour
-                detail_index = current_hour - SCHEDULE_START_HOUR
+                current_hour = end_h
 
-                slot_detail = None
-                if 0 <= detail_index < len(schedule.schedule_details):
-                    slot_detail = schedule.schedule_details[detail_index]
+            # fill remaining free time until end of shift
+            if current_hour < work_end_hour:
+                body_lines.append(
+                    f"{current_hour:02}:00 - {work_end_hour:02}:00 : Free"
+                )
 
-                if slot_detail:
-                    block_title = (
-                        f"{block_title} {slot_detail.description} ({slot_detail.type})"
-                    )
-                else:
-                    if work_start_hour <= current_hour < work_end_hour:
-                        block_title = f"{block_title} Free"
-                    else:
-                        block_title = f"{block_title} Out of Shift"
-                schedule_text_parts.append(block_title)
+            # show everything outside shift as Out of Shift
+            if work_start_hour > SCHEDULE_START_HOUR:
+                body_lines.insert(
+                    0,
+                    f"{SCHEDULE_START_HOUR:02}:00 - {work_start_hour:02}:00 : Out of Shift"
+                )
+            if work_end_hour < SCHEDULE_END_HOUR:
+                body_lines.append(
+                    f"{work_end_hour:02}:00 - {SCHEDULE_END_HOUR:02}:00 : Out of Shift"
+                )
 
-            messages.append("\n".join(schedule_text_parts))
+            messages.append("\n".join([header] + body_lines))
 
         return TextMessageV2(text="\n\n---\n\n".join(messages))
 
