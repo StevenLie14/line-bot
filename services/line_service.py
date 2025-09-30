@@ -79,7 +79,7 @@ class LineService:
                 if not isinstance(reply_text, list):
                     reply_text = [reply_text]
                 line_bot_api.reply_message(
-                    ReplyMessageRequest(reply_token=reply_token, messages=[reply_text])
+                    ReplyMessageRequest(reply_token=reply_token, messages=reply_text)
                 )
         except Exception as e:
             print(f"Error while sending reply: {e}")
