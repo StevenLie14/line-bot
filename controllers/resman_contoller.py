@@ -44,7 +44,7 @@ class ResmanController(BaseController):
         try:
             initials = args[0]
             day = args[1]
-            mid_code = args[2]
+            mid_code = args[2] if len(args) > 2 else 1
         except IndexError:
             return TextMessageV2(
                 text="Please provide your initials, the day, and the mid code."
@@ -55,8 +55,9 @@ class ResmanController(BaseController):
         args = Helper.parse_user_args(event.message.text)
         try:
             position = args[0]
+            mid_code = args[2] if len(args) > 2 else 1
             day = args[1]
-            mid_code = args[2]
+            
         except IndexError:
             return TextMessageV2(
                 text="Please provide your position, the day, and the mid code."
@@ -65,10 +66,11 @@ class ResmanController(BaseController):
 
     async def get_schedule_by_generation(self, event: MessageEvent):
         args = Helper.parse_user_args(event.message.text)
+
         try:
+            mid_code = args[2] if len(args) > 2 else 1
             generation = args[0]
             day = args[1]
-            mid_code = args[2]
         except IndexError:
             return TextMessageV2(
                 text="Please provide your generation, the day, and the mid code."

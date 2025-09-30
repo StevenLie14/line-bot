@@ -106,7 +106,7 @@ class ResmanService:
         try:
             semester = await self.resman_repository.get_active_semester()
             schedules = await self.resman_repository.get_schedule_by_generation(
-                generation, day, mid_code
+                generation, day, mid_code, semester.semester_id
             )
             return self._format_schedule(schedules, semester)
 
@@ -124,7 +124,7 @@ class ResmanService:
         try:
             semester = await self.resman_repository.get_active_semester()
             schedules = await self.resman_repository.get_schedule_by_position(
-                position, day, mid_code
+                position, day, mid_code, semester.semester_id
             )
             return self._format_schedule(schedules, semester)
 
