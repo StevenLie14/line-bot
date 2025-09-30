@@ -37,8 +37,8 @@ class ResmanService:
 
     def _format_schedule(
         self, schedules: list[Schedule], semester: Semester
-    ) -> TextMessageV2:
-        messages = []
+    ) -> list[TextMessageV2]:
+        message_texts: list[str] = []
 
         for schedule in schedules:
             shift_info = SHIFT_HOURS.get(
@@ -47,7 +47,6 @@ class ResmanService:
             work_start_hour = shift_info["start"]
             work_end_hour = shift_info["end"]
 
-            # Header
             header = (
                 f"Schedule for {schedule.initial}\n\n"
                 f"Semester : {semester.description}\n"
@@ -96,13 +95,13 @@ class ResmanService:
                     f"{work_end_hour:02}:00 - {SCHEDULE_END_HOUR:02}:00 : Out of Shift"
                 )
 
-            messages.append("\n".join([header] + body_lines))
+            message_texts.append("\n".join([header] + body_lines))
 
-        return TextMessageV2(text="\n\n---\n\n".join(messages))
+        return [TextMessageV2(text=txt) for txt in message_texts]
 
     async def get_schedule_by_generation(
         self, generation: str, day: str, mid_code: str
-    ) -> TextMessageV2:
+    ) -> list[TextMessageV2]:
         try:
             semester = await self.resman_repository.get_active_semester()
             schedules = await self.resman_repository.get_schedule_by_generation(
@@ -111,16 +110,14 @@ class ResmanService:
             return self._format_schedule(schedules, semester)
 
         except KeyError:
-            return TextMessageV2(text="Failed to retrieve data from RESMAN.")
+            return [TextMessageV2(text="Failed to retrieve data from RESMAN.")]
         except Exception as e:
             print(f"An error occurred: {e}")
-            return TextMessageV2(
-                text="An error occurred while processing the schedule."
-            )
+            return [TextMessageV2(text="An error occurred while processing the schedule.")]
 
     async def get_schedule_by_position(
         self, position: str, day: str, mid_code: str
-    ) -> TextMessageV2:
+    ) -> list[TextMessageV2]:
         try:
             semester = await self.resman_repository.get_active_semester()
             schedules = await self.resman_repository.get_schedule_by_position(
@@ -129,16 +126,14 @@ class ResmanService:
             return self._format_schedule(schedules, semester)
 
         except KeyError:
-            return TextMessageV2(text="Failed to retrieve data from RESMAN.")
+            return [TextMessageV2(text="Failed to retrieve data from RESMAN.")]
         except Exception as e:
             print(f"An error occurred: {e}")
-            return TextMessageV2(
-                text="An error occurred while processing the schedule."
-            )
+            return [TextMessageV2(text="An error occurred while processing the schedule.")]
 
     async def get_schedule_by_initials(
         self, initials: str, day: str, mid_code: str
-    ) -> TextMessageV2:
+    ) -> list[TextMessageV2]:
         try:
             semester = await self.resman_repository.get_active_semester()
             schedules = await self.resman_repository.get_schedule_by_initials(
@@ -147,9 +142,7 @@ class ResmanService:
             return self._format_schedule(schedules, semester)
 
         except KeyError:
-            return TextMessageV2(text="Failed to retrieve data from RESMAN.")
+            return [TextMessageV2(text="Failed to retrieve data from RESMAN.")]
         except Exception as e:
             print(f"An error occurred: {e}")
-            return TextMessageV2(
-                text="An error occurred while processing the schedule."
-            )
+            return [TextMessageV2(text="An error occurred while processing the schedule.")]

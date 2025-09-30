@@ -72,10 +72,12 @@ class LineService:
         except Exception as e:
             print(f"Error in async handler: {e}")
 
-    def send_reply(self, reply_token, reply_text: TextMessageV2):
+    def send_reply(self, reply_token, reply_text: TextMessageV2 | list[TextMessageV2]):
         try:
             with ApiClient(self.configuration) as api_client:
                 line_bot_api = MessagingApi(api_client)
+                if not isinstance(reply_text, list):
+                    reply_text = [reply_text]
                 line_bot_api.reply_message(
                     ReplyMessageRequest(reply_token=reply_token, messages=[reply_text])
                 )
